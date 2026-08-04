@@ -28,7 +28,10 @@ import "./App.css";
 import Dashboard from "./pages/dashboard";
 import SubjectsList from "./pages/subjects/list";
 import SubjectsCreate from "./pages/subjects/create";
-import { BookOpen, Home } from "lucide-react"
+import { BookOpen, Home, GraduationCap} from "lucide-react"
+
+import ClassesList from "./pages/classes/list";
+import ClassesCreate from "./pages/classes/create";
 
 
 function App() {
@@ -64,7 +67,16 @@ function App() {
                     label: 'Subjects',
                     icon: <BookOpen />
                   }
-                }
+                },
+                {
+                  name: "classes",
+                  list: "/classes",
+                  create: "/classes/create",
+                  meta: {
+                    label: 'Classes',
+                    icon: <GraduationCap/>
+                  }
+                },
               ]}
 
             >
@@ -78,6 +90,11 @@ function App() {
                   <Route path ="subjects">
                     <Route index element = {<SubjectsList/>}/>
                     <Route path="create" element = {<SubjectsCreate/>}>
+                    </Route>
+                  </Route>
+                  <Route path ="classes">
+                    <Route index element = {<ClassesList/>}/>
+                    <Route path="create" element = {<ClassesCreate/>}>
                     </Route>
                   </Route>
                 </Route>
