@@ -133,9 +133,9 @@ const ClassesList = () => {
             <div className="intro-row">
                 <p>Manage your classes, subjects, and teachers.</p>
 
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-wrap">
-                    <div className="relative flex-1 min-w-[200px]">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <div className="actions-row">
+                    <div className="search-field">
+                        <Search className="search-icon" />
 
                         <Input
                             type="text"
@@ -146,7 +146,7 @@ const ClassesList = () => {
                         />
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2 shrink-0">
+                    <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                         <Select
                             value={selectedSubject} onValueChange={setSelectedSubject}
                         >
