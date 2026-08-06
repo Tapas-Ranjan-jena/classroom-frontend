@@ -28,7 +28,7 @@ import "./App.css";
 import Dashboard from "./pages/dashboard.tsx";
 import SubjectsList from "./pages/subjects/list.tsx";
 import SubjectsCreate from "./pages/subjects/create.tsx";
-import { BookOpen, Home, GraduationCap} from "lucide-react"
+import { BookOpen, Home, GraduationCap } from "lucide-react"
 
 import ClassesList from "./pages/classes/list.tsx";
 import ClassesCreate from "./pages/classes/create.tsx";
@@ -73,10 +73,10 @@ function App() {
                   name: "classes",
                   list: "/classes",
                   create: "/classes/create",
-                  show:'/classes/show/:id',
+                  show: '/classes/show/:id',
                   meta: {
                     label: 'Classes',
-                    icon: <GraduationCap/>
+                    icon: <GraduationCap />
                   }
                 },
               ]}
@@ -89,19 +89,17 @@ function App() {
                   </Layout>
                 }>
                   <Route path="/" element={<Dashboard />} />
-                  <Route path ="subjects">
-                    <Route index element = {<SubjectsList/>}/>
-                    <Route path="create" element = {<SubjectsCreate/>}>
-                    </Route>
+                  <Route path="subjects">
+                    <Route index element={<SubjectsList />} />
+                    <Route path="create" element={<SubjectsCreate />} />
                   </Route>
-                  <Route path ="classes">
-                    <Route index element = {<ClassesList/>}/>
-                    <Route path="create" element = {<ClassesCreate/>}>
-                    <Route path="show/:id" element={<ClassesShow/>}/>
-                    </Route>
+                  <Route path="classes">
+                    <Route index element={<ClassesList />} />
+                    <Route path="create" element={<ClassesCreate />} />
+                    <Route path="show/:id" element={<ClassesShow />} />
                   </Route>
                 </Route>
-                
+
               </Routes>
               <Toaster />
               <RefineKbar />
