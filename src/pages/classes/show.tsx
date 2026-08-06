@@ -7,6 +7,9 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button.tsx";
+import { AdvancedImage } from "@cloudinary/react";
+import { bannerPhoto } from "../../lib/cloudinary";
+
 
 const Show = () => {
     const { query } = useShow<ClassDetails>({ resource: "classes" });
@@ -65,7 +68,11 @@ const Show = () => {
             />
             <div className="banner">
                 {bannerUrl ? (
-                    <p>Render Cloudinary's advanced image</p>
+                    <AdvancedImage alt="class Banner"
+                        cldImg={
+                            bannerPhoto(bannerCldPubId ?? '', name)
+                        }
+                    />
                 ) : (
                     <div className="placeholder" />
                 )}
