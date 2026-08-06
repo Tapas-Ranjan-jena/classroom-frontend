@@ -3,7 +3,8 @@ export type Subject = {
     name: string;
     code: string;
     description: string;
-    department: string;
+    departmentId?: number;
+    department?: Department | string;
     createdAt?: string;
 };
 
@@ -91,25 +92,64 @@ export type Schedule = {
 
 export type Department = {
     id: number;
+    code?: string;
     name: string;
     description: string;
+    createdAt?: string;
 };
 
 export type ClassDetails = {
     id: number;
     name: string;
     description: string;
-    status: "active" | "inactive";
+    status: "active" | "inactive" | "archived";
     capacity: number;
-    courseCode: string;
-    courseName: string;
+    courseCode?: string;
+    courseName?: string;
     bannerUrl?: string;
     bannerCldPubId?: string;
+    subjectId?: number;
+    teacherId?: string;
     subject?: Subject;
     teacher?: User;
     department?: Department;
     schedules: Schedule[];
     inviteCode?: string;
+    createdAt?: string;
+};
+
+export type Enrollment = {
+    enrollmentId: number;
+    enrolledAt: string;
+    student: User;
+};
+
+export type DashboardStats = {
+    metrics: {
+        totalUsers: number;
+        totalDepartments: number;
+        totalSubjects: number;
+        totalClasses: number;
+        activeClasses: number;
+        totalEnrollments: number;
+    };
+    charts: {
+        userDistribution: { role: string; count: number }[];
+        classesByDepartment: { department: string; count: number }[];
+        capacityStatus: {
+            id: number;
+            className: string;
+            enrolled: number;
+            capacity: number;
+            fillPercentage: number;
+            isWarning: boolean;
+        }[];
+        enrollmentTrends: { name: string; students: number; capacity: number }[];
+    };
+    activityFeed: {
+        recentEnrollments: { id: number; createdAt: string; studentName: string; className: string }[];
+        recentClasses: { id: number; name: string; createdAt: string; teacherName: string }[];
+    };
 };
 
 export type SignUpPayload = {

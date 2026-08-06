@@ -1,29 +1,27 @@
-import {createDataProvider, CreateDataProviderOptions} from "@refinedev/rest";
-import {BACKEND_BASE_URL} from "@/constants";
-import {ListResponse} from "@/types";
-import {HttpError} from "@refinedev/core"
-import { CreateResponse } from "@refinedev/core";
-import { GetOneResponse } from "@refinedev/core";
+import { createDataProvider, CreateDataProviderOptions } from "@refinedev/rest";
+import { BACKEND_BASE_URL } from "@/constants";
+import { ListResponse } from "@/types";
+import { HttpError, CreateResponse, GetOneResponse, UpdateResponse, DeleteOneResponse } from "@refinedev/core";
 
-if(!BACKEND_BASE_URL){
-    throw new Error('BACKEND_BASE_URL is not configured.please set VITE_BACKEND_BASE_URL in your .env file.')
+if (!BACKEND_BASE_URL) {
+    throw new Error('BACKEND_BASE_URL is not configured. Please set VITE_BACKEND_BASE_URL in your .env file.');
 }
 
-const builtHttpError = async (response:Response) : Promise<HttpError> => {
-    let message='Request failed';
+const builtHttpError = async (response: Response): Promise<HttpError> => {
+    let message = 'Request failed';
 
-    try{
-        const payload =(await response.json()) as {message?: string};
-        if(payload?.message) message = payload.message;
-    }catch{
+    try {
+        const payload = (await response.json()) as { message?: string; error?: string };
+        if (payload?.message) message = payload.message;
+        else if (payload?.error) message = payload.error;
+    } catch {
         // ignore error and keep default message
-    
     }
-    return{
+    return {
         message,
-        statusCode:response.status
-    }
-}
+        statusCode: response.status
+    };
+};
 
 const options: CreateDataProviderOptions = {
     getList: {
@@ -32,65 +30,81 @@ const options: CreateDataProviderOptions = {
         buildQueryParams: async ({ resource, pagination, filters }) => {
             const page = pagination?.currentPage ?? 1;
             const pageSize = pagination?.pageSize ?? 10;
-        
-            const params: Record<string, string|number> = { page, limit: pageSize };
-        
+
+            const params: Record<string, string | number> = { page, limit: pageSize };
+
             filters?.forEach((filter) => {
                 const field = 'field' in filter ? filter.field : '';
-        
                 const value = String(filter.value);
-        
-                if(resource === 'subjects') {
-                    if(field === 'department') params.department = value;
-                    if(field === 'name' || field === 'code') params.search = value;
+
+                if (resource === 'subjects') {
+                    if (field === 'department') params.department = value;
+                    if (field === 'name' || field === 'code' || field === 'search') params.search = value;
                 }
-                if(resource === 'classes') {
-                    if(field === 'subject') params.subject = value;
-                    if(field === 'teacher') params.teacher = value;
-                    if(field === 'name') params.search = value;
+                if (resource === 'classes') {
+                    if (field === 'subject') params.subject = value;
+                    if (field === 'teacher') params.teacher = value;
+                    if (field === 'name' || field === 'search') params.search = value;
                 }
-            })
-        
+                if (resource === 'users') {
+                    if (field === 'role') params.role = value;
+                    if (field === 'name' || field === 'email' || field === 'search') params.search = value;
+                }
+                if (resource === 'departments') {
+                    if (field === 'name' || field === 'code' || field === 'search') params.search = value;
+                }
+            });
+
             return params;
         },
 
         mapResponse: async (response) => {
-            if(!response.ok) throw await builtHttpError(response);
-
+            if (!response.ok) throw await builtHttpError(response);
             const payload: ListResponse = await response.clone().json();
-
             return payload.data ?? [];
         },
 
         getTotalCount: async (response) => {
-            if(!response.ok) throw await builtHttpError(response);
+            if (!response.ok) throw await builtHttpError(response);
             const payload: ListResponse = await response.clone().json();
-
             return payload.pagination?.total ?? payload.data?.length ?? 0;
         }
     },
     create: {
         getEndpoint: ({ resource }) => resource,
-
-        buildBodyParams: async ({ variables}) => variables,
-
+        buildBodyParams: async ({ variables }) => variables,
         mapResponse: async (response) => {
+            if (!response.ok) throw await builtHttpError(response);
             const json: CreateResponse = await response.json();
-
             return json.data ?? [];
         }
     },
-    getOne:{
-        getEndpoint: ({resource,id}) => `${resource}/${id}`,
-
-        mapResponse:async (response) => {
+    getOne: {
+        getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+        mapResponse: async (response) => {
+            if (!response.ok) throw await builtHttpError(response);
             const json: GetOneResponse = await response.json();
             return json.data ?? {};
-            
+        }
+    },
+    update: {
+        getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+        buildBodyParams: async ({ variables }) => variables,
+        mapResponse: async (response) => {
+            if (!response.ok) throw await builtHttpError(response);
+            const json: UpdateResponse = await response.json();
+            return json.data ?? {};
+        }
+    },
+    deleteOne: {
+        getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+        mapResponse: async (response) => {
+            if (!response.ok) throw await builtHttpError(response);
+            const json: DeleteOneResponse = await response.json();
+            return json.data ?? {};
         }
     }
-
-}
+};
 
 const { dataProvider } = createDataProvider(BACKEND_BASE_URL, options);
 
